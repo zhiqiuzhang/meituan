@@ -23,6 +23,9 @@
     				<img class="icon" :src="item.icon" v-if="item.icon" alt=""> 
     				{{item.name}}
     			</p>
+    			<i class="num" v-show="calculateCount(item.spus)">
+    				{{ calculateCount(item.spus) }}
+    			</i>
     		</li>
     	</ul>
   	</div>
@@ -68,7 +71,8 @@
   			</li>
   		</ul>
   	</div>
-    <app-cart :poiInfo='poiInfo'></app-cart>
+  <!-- 	购物车 -->
+    <app-cart :poiInfo='poiInfo' :selecFoods='selecFoods'></app-cart>
   </div>
 </template>
 
@@ -106,7 +110,18 @@ export default {
   		return 0;
   	},
   	selecFoods() {
-  		
+  		let foods = [];
+  		this.goods.forEach((myfoods) => {
+  			myfoods.spus.forEach((foodcount) => {
+  				if(foodcount.count > 0) {
+  					foods.push(foodcount);
+  				}
+  			})
+  		})
+  		return foods;
+
+
+
   	}
   },
   methods: {
@@ -141,6 +156,16 @@ export default {
   		let liList = this.$refs.foodScroll.getElementsByClassName('food-list-hook');
   		let element = liList[index];
   		this.foodScroll.scrollToElement(element, 250);
+  	},
+  	calculateCount(spus) {
+  		let count = 0;
+  		spus.forEach((food) => {
+  			if(food.count > 0) {
+  				count += food.count
+  			}
+  		})
+  		return count;
+
   	}
   	
 
