@@ -1,8 +1,9 @@
 <template>
+<div class="shopcart" :class="{'highligh':totalCount>0}">
 	<div class="shopcart-wrapper" >
     <!-- 底部左侧 -->
     <div class="content-left">
-      <div class="logo-wrapper" :class="{'highligh':totalCount>0}">
+      <div class="logo-wrapper" :class="{'highligh':totalCount>0}" @click="toggleList">
         <span class="icon-shopping_cart logo" :class="{'highligh':totalCount>0}"></span>
         <i class="num" v-show="totalCount">{{ totalCount }}</i>
       </div>
@@ -17,16 +18,58 @@
     <div class="content-right" :class="{'highligh':totalCount>0}">
       {{ payStr }}
     </div>
+
+    <!-- 购物车列表 -->
+		<div class="shopcart-list" v-show="listShow" :class="{'show': listShow}">
+			<div class="list-top" v-if="poiInfo.discounts2">
+				{{ poiInfo.discounts2[0].info }}
+			</div>
+			<div class="list-header">
+				<h3 class="title">1号口袋</h3>
+				<div class="empty" @click="clearAll">
+					<img src="./img/ash_bin.png" />
+					<span>清空购物车</span>
+				</div>
+			</div>
+			<div class="list-content" ref="listContent">
+				<ul>
+					<li class="food-item" v-for="(food,index) in selecFoods" :key="index">
+						<div class="desc-wrapper">
+							<div class="desc-left">
+								<p class="name">{{ food.name }}</p>
+								<p class="unit" v-show="!food.description">{{ food.unit }}</p>
+								<p class="description" v-show="!food.unit">{{ food.description }}</p>
+							</div>
+							<div class="desc-right">
+								￥{{ food.min_price }}
+							</div>
+						</div>
+						<div class="cartcontrol-wrapper">
+							<app-cartcontrol :food="food"></app-cartcontrol>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div class="list-bottom"></div>
+		</div>
 	</div>
+	<div class="shopcart-mask" v-show="listShow" @click="hideMask"></div>
+</div>
 </template>
 
 <script>
+	import Bscroll from 'better-scroll'
+    import CartControll from '../cartcontroll/CartControll'
+
 	export default {
 		name: 'ShopCart',
 		data(){
 			return {
-				
+				fold:true
 			}
+		},
+		components: {
+			'app-cartcontrol': CartControll
 		},
 		props:{
 		  	poiInfo: {
@@ -41,6 +84,22 @@
 		  			]
 		  		}
 		  	}
+  		},
+  		methods: {
+  			toggleList() {
+  				if(!this.totalCount) {
+  					return;
+  				}
+  				this.fold = !this.fold
+  			},
+  			hideMask() {
+				this.fold = true
+			},
+			clearAll() {
+				this.selecFoods.forEach((food) => {
+					food.count = 0
+				})
+			}
   		},
   		computed: {
   			totalCount() {
@@ -63,6 +122,24 @@
   				} else {
   					return this.poiInfo.min_price_tip
   				}
+  			},
+  			listShow() {
+  				if(!this.totalCount) {
+  					this.fold = true;
+  					return
+  				}
+  				let show = !this.fold
+  				if(show) {
+  					this.$nextTick(()=>{
+  						if(!this.listContent) {
+  							this.listContent = new Bscroll(this.$refs.listContent, {click: true});
+  						} else {
+  							this.listContent.refresh()
+  						}
+  						
+  					})
+  				}
+  				return show;
   			}
   		}
     
