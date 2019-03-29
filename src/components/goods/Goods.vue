@@ -47,7 +47,9 @@
   				<ul>
             <li 
               v-for="(food,index) in item.spus" 
-              :key="index" class="food-item">
+              :key="index" 
+              @click="foodDetail(food)"
+              class="food-item">
               <div class="icon" :style="head_bg(food.picture)"></div>
               <div class="content">
                 <h3 class="name">{{food.name}}</h3>
@@ -73,6 +75,9 @@
   	</div>
   <!-- 	购物车 -->
     <app-cart :poiInfo='poiInfo' :selecFoods='selecFoods'></app-cart>
+
+    <!-- 食品详情 -->
+	<app-shopdetail :food="selecfood" ref="detailShow"></app-shopdetail>
   </div>
 </template>
 
@@ -81,11 +86,13 @@
 import Bscroll from 'better-scroll'
 import ShopCart from '../shopcart/Shopcart'
 import CartControll from '../cartcontroll/CartControll'
+import ShopDetail from '../shopdetail/Shopdetail'
 export default {
   name: 'Goods',
   components: {
     'app-cart': ShopCart,
-    'app-cartcontroll': CartControll
+    'app-cartcontroll': CartControll,
+    'app-shopdetail': ShopDetail
   },
   data() {
   	return {
@@ -95,7 +102,8 @@ export default {
   		heightLength: [],
   		menuScroll: {},
   		foodScroll: {},
-  		scrollY: 0
+  		scrollY: 0,
+  		selecfood: {}
   	}
   },
   computed: {
@@ -119,9 +127,6 @@ export default {
   			})
   		})
   		return foods;
-
-
-
   	}
   },
   methods: {
@@ -165,7 +170,10 @@ export default {
   			}
   		})
   		return count;
-
+  	},
+  	foodDetail(food) {
+  		this.selecfood = food;
+  		this.$refs.detailShow.showView();
   	}
   	
 
