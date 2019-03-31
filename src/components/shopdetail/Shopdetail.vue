@@ -33,7 +33,7 @@
                 选规格
               </div>
             </div>
-
+      <app-split></app-split>
       <!-- 外卖评价 -->
         <div class="rating-wrapper">
           <!-- 评价头部 -->
@@ -49,29 +49,30 @@
                
               </span>
             </div>
-            <div class="snd-title">
-                  <span class="text"></span> 
+            <div class="snd-title" v-if="food.rating">
+                  <span class="text">{{food.rating.snd_title}}</span> 
                   <span class="icon icon-keyboard_arrow_right"></span> 
             </div>
           </div>
-          <ul class="rating-content">
+          <ul class="rating-content" v-if="food.rating">
             <li 
-              
+              v-for="(commentitem, index) in food.rating.comment_list"
+              :key="index"
               class="comment-item"
               >
               <div class="comment-header">
-                <img />
-                <img src="./img/anonymity.png"   />
+                <img :src="commentitem.user_icon" v-if="commentitem.user_icon" />
+                <img src="./img/anonymity.png" v-if="!commentitem.user_icon" />
               </div>
               <div class="comment-main">
                 <div class="user">
-                  
+                  {{commentitem.user_name}}
                 </div>
                 <div class="time">
-                  
+                  {{commentitem.comment_unix_time}}
                 </div>
                 <div class="content">
-                  
+                  {{commentitem.comment_content}}
                 </div>
               </div>
             </li>
@@ -90,6 +91,7 @@
   import CartControll from '../cartcontroll/CartControll'
   import Vue from 'vue'
   import Bscroll from 'better-scroll'
+  import Split from '../split/Split'
 	export default {
 		data(){
       return {
@@ -124,7 +126,8 @@
       }
     },
     components:{
-      'app-cartcontroll': CartControll
+      'app-cartcontroll': CartControll,
+      'app-split': Split
     }
 	}
 </script>
