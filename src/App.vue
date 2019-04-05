@@ -1,8 +1,10 @@
 <template>
   <div id="app">
     <app-header :poiInfo='poiInfo' />
-    <app-nav />
-    <router-view></router-view>
+    <app-nav :commentNum='commentNum'/>
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
   </div>
 </template>
 
@@ -18,7 +20,8 @@ export default {
   },
   data() {
     return {
-      poiInfo: {}
+      poiInfo: {},
+      commentNum: 0
     }
   },
   created(){
@@ -27,6 +30,14 @@ export default {
     }).then(res => {
       if(res.code === 0) {
         this.poiInfo = res.data.poi_info;
+      }
+    })
+
+    fetch('/api/ratings').then(res => {
+       return res.json()
+    }).then(res => {
+      if(res.code === 0) {
+        this.commentNum = res.data.comment_num;
       }
     })
   }
